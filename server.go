@@ -1,8 +1,7 @@
 package stats
 
 import (
-	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"net"
 	"strconv"
@@ -54,32 +53,29 @@ func (s *ServerStats) Run() <-chan *Stats {
 		server.SetReadBuffer(bufferSize)
 
 		var addr *net.UDPAddr
-		var buf bytes.Buffer
 		var bytesRead int
 		buff := make([]byte, bufferSize)
 		stats := new(Stats)
-
-		decoder := gob.NewDecoder(&buf)
 
 		for {
 
 			bytesRead, addr, err = server.ReadFromUDP(buff)
 			if err != nil {
 				fmt.Println("Error:", err)
-				buf.Reset()
 				continue
 			}
 
-			buf.Write(buff)
-			err = decoder.Decode(stats)
-			buf.Reset()
 			if err != nil {
-				fmt.Println("Error:", err)
+				fmt.Printf("Error:%s bytes read %d\n", err, bytesRead)
 				continue
 			}
 
 			if s.debug {
-				fmt.Printf("Recieved: %v from %s Read %d bytes\n", stats.MemStats, addr, bytesRead)
+				fmt.Printf("Recieved: %s from %s Read %d bytes\n", string(buff[0:bytesRead]), addr, bytesRead)
+			}
+
+			if err := json.Unmarshal(buff[0:bytesRead], &stats); err != nil {
+				fmt.Println("Error Unmarshalling:", err)
 			}
 
 			results <- stats

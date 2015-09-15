@@ -1,8 +1,7 @@
 package stats
 
 import (
-	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"net"
 	"runtime"
@@ -15,6 +14,7 @@ type ClientConfig struct {
 	Domain       string
 	Port         int
 	PollInterval int
+	Debug        bool
 }
 
 // ClientStats is the object used to collect and send data to the server for processing
@@ -23,6 +23,7 @@ type ClientStats struct {
 	serverAddr string
 	stop       chan struct{}
 	interval   int
+	debug      bool
 }
 
 // NewClient create a new client object for use
@@ -32,6 +33,7 @@ func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientS
 		serverAddr: serverConfig.Domain + ":" + strconv.Itoa(serverConfig.Port),
 		interval:   clientConfig.PollInterval,
 		stop:       make(chan struct{}),
+		debug:      clientConfig.Debug,
 	}, nil
 }
 
@@ -62,11 +64,10 @@ func (c *ClientStats) Run() {
 
 	client.SetWriteBuffer(bufferSize)
 
-	var buf bytes.Buffer
 	var bytesWritten int
+	var bytes []byte
 	stats := new(Stats)
 	stats.MemStats = runtime.MemStats{}
-	encoder := gob.NewEncoder(&buf)
 	ticker := time.NewTicker(time.Millisecond * time.Duration(c.interval))
 	defer ticker.Stop()
 
@@ -76,20 +77,16 @@ func (c *ClientStats) Run() {
 
 			runtime.ReadMemStats(&stats.MemStats)
 
-			err = encoder.Encode(stats)
+			bytes, err = json.Marshal(stats)
+			bytesWritten, err = client.Write(bytes)
 			if err != nil {
 				fmt.Println(stats, err)
-				buf.Reset()
 				continue
 			}
 
-			bytesWritten, err = client.Write(buf.Bytes())
-			buf.Reset()
-			if err != nil {
-				fmt.Println("Error Writing Buf:", err)
+			if c.debug {
+				fmt.Println("Wrote:", bytesWritten, "bytes")
 			}
-
-			fmt.Println("Wrote:", bytesWritten)
 
 		case <-c.stop:
 			fmt.Println("done")
