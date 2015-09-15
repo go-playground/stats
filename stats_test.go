@@ -62,8 +62,9 @@ func TestBadServerAndEncodingFailure(t *testing.T) {
 	}
 
 	localConfig := &ClientConfig{
-		Domain: "",
-		Port:   3013,
+		Domain:       "",
+		Port:         3013,
+		PollInterval: 1000,
 	}
 
 	client, err := NewClient(localConfig, serverConfig)
@@ -91,8 +92,9 @@ func TestBadAddrs(t *testing.T) {
 	PanicMatches(t, func() { server.Run() }, "lookup udp/-1000: nodename nor servname provided, or not known")
 
 	localConfig := &ClientConfig{
-		Domain: "erferfergergerg",
-		Port:   -2000,
+		Domain:       "erferfergergerg",
+		Port:         -2000,
+		PollInterval: 1000,
 	}
 
 	client, err := NewClient(localConfig, serverConfig)
@@ -116,8 +118,9 @@ func TestClientSendingData(t *testing.T) {
 	}
 
 	localConfig := &ClientConfig{
-		Domain: "",
-		Port:   3009,
+		Domain:       "",
+		Port:         3009,
+		PollInterval: 1000,
 	}
 
 	client, err := NewClient(localConfig, serverConfig)

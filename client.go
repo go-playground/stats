@@ -11,8 +11,9 @@ import (
 
 // ClientConfig is used to initialize a new ClientStats object
 type ClientConfig struct {
-	Domain string
-	Port   int
+	Domain       string
+	Port         int
+	PollInterval int
 }
 
 // ClientStats is the object used to collect and send data to the server for processing
@@ -20,6 +21,7 @@ type ClientStats struct {
 	localAddr  string
 	serverAddr string
 	stop       chan struct{}
+	interval   int
 }
 
 // NewClient create a new client object for use
@@ -27,6 +29,7 @@ func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientS
 	return &ClientStats{
 		localAddr:  clientConfig.Domain + ":" + strconv.Itoa(clientConfig.Port),
 		serverAddr: serverConfig.Domain + ":" + strconv.Itoa(serverConfig.Port),
+		interval:   clientConfig.PollInterval,
 		stop:       make(chan struct{}),
 	}, nil
 }
@@ -59,7 +62,7 @@ func (c *ClientStats) Run() {
 	stats := new(Stats)
 	stats.MemStats = new(runtime.MemStats)
 	encoder := gob.NewEncoder(client)
-	ticker := time.NewTicker(time.Second * 1)
+	ticker := time.NewTicker(time.Millisecond * time.Duration(c.interval))
 	defer ticker.Stop()
 
 	for {
