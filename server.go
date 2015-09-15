@@ -16,17 +16,20 @@ const (
 type ServerConfig struct {
 	Domain string
 	Port   int
+	Debug  bool
 }
 
 // ServerStats is the object used to receive, store and send data for usage
 type ServerStats struct {
-	addr string
+	addr  string
+	debug bool
 }
 
 // NewServer create a new server object for use
 func NewServer(config *ServerConfig) (*ServerStats, error) {
 	return &ServerStats{
-		addr: config.Domain + ":" + strconv.Itoa(config.Port),
+		addr:  config.Domain + ":" + strconv.Itoa(config.Port),
+		debug: config.Debug,
 	}, nil
 }
 
@@ -77,6 +80,10 @@ func (s *ServerStats) Run() <-chan *Stats {
 			if err != nil {
 				fmt.Println("Error:", err)
 				continue
+			}
+
+			if s.debug {
+				fmt.Printf("Recieved: %v from %s Read %d bytes\n", stats.MemStats, addr, bytesRead)
 			}
 
 			results <- stats
