@@ -31,50 +31,59 @@ func NewServer(config *ServerConfig) (*ServerStats, error) {
 }
 
 // Run starts receiving the profiling stats for storage and usage
-func (s *ServerStats) Run() {
+func (s *ServerStats) Run() <-chan *Stats {
 
-	var serverAddr *net.UDPAddr
-	var server *net.UDPConn
-	var err error
+	results := make(chan *Stats)
 
-	serverAddr, err = net.ResolveUDPAddr(udp, s.addr)
-	if err != nil {
-		panic(err)
-	}
+	go func(results chan<- *Stats) {
 
-	server, err = net.ListenUDP(udp, serverAddr)
-	if err != nil {
-		panic(err)
-	}
-	defer server.Close()
+		var serverAddr *net.UDPAddr
+		var server *net.UDPConn
+		var err error
 
-	server.SetReadBuffer(bufferSize)
-
-	var addr *net.UDPAddr
-	var buf bytes.Buffer
-	var bytesRead int
-	buff := make([]byte, bufferSize)
-	stats := new(Stats)
-
-	decoder := gob.NewDecoder(&buf)
-
-	for {
-
-		bytesRead, addr, err = server.ReadFromUDP(buff)
+		serverAddr, err = net.ResolveUDPAddr(udp, s.addr)
 		if err != nil {
-			fmt.Println("Error:", err)
+			panic(err)
+		}
+
+		server, err = net.ListenUDP(udp, serverAddr)
+		if err != nil {
+			panic(err)
+		}
+		defer server.Close()
+
+		server.SetReadBuffer(bufferSize)
+
+		var addr *net.UDPAddr
+		var buf bytes.Buffer
+		var bytesRead int
+		buff := make([]byte, bufferSize)
+		stats := new(Stats)
+
+		decoder := gob.NewDecoder(&buf)
+
+		for {
+
+			bytesRead, addr, err = server.ReadFromUDP(buff)
+			if err != nil {
+				fmt.Println("Error:", err)
+				buf.Reset()
+				continue
+			}
+
+			buf.Write(buff)
+			err = decoder.Decode(stats)
 			buf.Reset()
-			continue
-		}
+			if err != nil {
+				fmt.Println("Error:", err)
+				continue
+			}
 
-		buf.Write(buff)
-		err = decoder.Decode(stats)
-		buf.Reset()
-		if err != nil {
-			fmt.Println("Error:", err)
-			continue
-		}
+			fmt.Printf("Recieved: %v from %s Read %d bytes\n", stats.MemStats, addr, bytesRead)
 
-		fmt.Printf("Recieved: %v from %s Read %d bytes\n", stats.MemStats, addr, bytesRead)
-	}
+			results <- stats
+		}
+	}(results)
+
+	return results
 }
