@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"bytes"
 	"encoding/gob"
 	"fmt"
 	"net"
@@ -59,9 +60,13 @@ func (c *ClientStats) Run() {
 	}
 	defer client.Close()
 
+	client.SetWriteBuffer(bufferSize)
+
+	var buf bytes.Buffer
+	var bytesWritten int
 	stats := new(Stats)
 	stats.MemStats = runtime.MemStats{}
-	encoder := gob.NewEncoder(client)
+	encoder := gob.NewEncoder(&buf)
 	ticker := time.NewTicker(time.Millisecond * time.Duration(c.interval))
 	defer ticker.Stop()
 
@@ -70,10 +75,21 @@ func (c *ClientStats) Run() {
 		case <-ticker.C:
 
 			runtime.ReadMemStats(&stats.MemStats)
+
 			err = encoder.Encode(stats)
 			if err != nil {
 				fmt.Println(stats, err)
+				buf.Reset()
+				continue
 			}
+
+			bytesWritten, err = client.Write(buf.Bytes())
+			buf.Reset()
+			if err != nil {
+				fmt.Println("Error Writing Buf:", err)
+			}
+
+			fmt.Println("Wrote:", bytesWritten)
 
 		case <-c.stop:
 			fmt.Println("done")

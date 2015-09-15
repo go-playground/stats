@@ -8,10 +8,6 @@ import (
 	"strconv"
 )
 
-const (
-	bufferSize = 2048
-)
-
 // ServerConfig is used to initialize a new ServerStats object
 type ServerConfig struct {
 	Domain string
