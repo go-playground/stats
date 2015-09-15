@@ -61,11 +61,6 @@ func (s *ServerStats) Run() <-chan *Stats {
 
 			bytesRead, addr, err = server.ReadFromUDP(buff)
 			if err != nil {
-				fmt.Println("Error:", err)
-				continue
-			}
-
-			if err != nil {
 				fmt.Printf("Error:%s bytes read %d\n", err, bytesRead)
 				continue
 			}
