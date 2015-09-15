@@ -35,8 +35,6 @@ func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientS
 // NOTE: the server must be running prior to starting
 func (c *ClientStats) Run() {
 
-	// go func() {
-
 	var localAddr *net.UDPAddr
 	var serverAddr *net.UDPAddr
 	var client *net.UDPConn
@@ -79,7 +77,6 @@ func (c *ClientStats) Run() {
 			return
 		}
 	}
-	// }()
 }
 
 // Stop halts the client from sending any more data to the server,

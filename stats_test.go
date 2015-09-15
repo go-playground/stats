@@ -20,7 +20,8 @@ import (
 //
 
 func TestMain(m *testing.M) {
-
+	// setup
+	//
 	// setup server for tests
 	config := &ServerConfig{
 		Domain: "",
@@ -60,28 +61,14 @@ func TestBadServerAndEncodingFailure(t *testing.T) {
 		Port:   3012,
 	}
 
-	// server, err := NewServer(serverConfig)
-	// Equal(t, err, nil)
-
-	// PanicMatches(t, func() { server.Run() }, "lookup udp/-1000: nodename nor servname provided, or not known")
-
 	localConfig := &ClientConfig{
 		Domain: "",
 		Port:   3013,
 	}
 
-	// client, err := NewClient(localConfig, serverConfig)
-	// Equal(t, err, nil)
-	// PanicMatches(t, func() { client.Run() }, "lookup udp/-1000: nodename nor servname provided, or not known")
-
-	// // set good server, but bad local remains
-	// serverConfig.Domain = ""
-	// serverConfig.Port = 3011
-
 	client, err := NewClient(localConfig, serverConfig)
 	Equal(t, err, nil)
 	go client.Run()
-	// PanicMatches(t, func() { client.Run() }, "lookup udp/-2000: nodename nor servname provided, or not known")
 
 	<-time.Tick(time.Second * 1)
 
