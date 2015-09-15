@@ -60,7 +60,7 @@ func (c *ClientStats) Run() {
 	defer client.Close()
 
 	stats := new(Stats)
-	stats.MemStats = new(runtime.MemStats)
+	stats.MemStats = runtime.MemStats{}
 	encoder := gob.NewEncoder(client)
 	ticker := time.NewTicker(time.Millisecond * time.Duration(c.interval))
 	defer ticker.Stop()
@@ -69,7 +69,7 @@ func (c *ClientStats) Run() {
 		select {
 		case <-ticker.C:
 
-			runtime.ReadMemStats(stats.MemStats)
+			runtime.ReadMemStats(&stats.MemStats)
 			err = encoder.Encode(stats)
 			if err != nil {
 				fmt.Println(stats, err)

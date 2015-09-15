@@ -79,8 +79,6 @@ func (s *ServerStats) Run() <-chan *Stats {
 				continue
 			}
 
-			fmt.Printf("Recieved: %v from %s Read %d bytes\n", stats.MemStats, addr, bytesRead)
-
 			results <- stats
 		}
 	}(results)

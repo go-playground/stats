@@ -8,5 +8,5 @@ const (
 
 // Stats contains all of the statistics to be passed and Encoded/Decoded on the Client and Server sides
 type Stats struct {
-	MemStats *runtime.MemStats
+	MemStats runtime.MemStats
 }
