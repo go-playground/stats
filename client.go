@@ -64,10 +64,12 @@ func (c *ClientStats) Run() {
 
 	client.SetWriteBuffer(bufferSize)
 
+	stats := new(Stats)
+	stats.HostInfo = GetHostInfo()
+	stats.MemStats = runtime.MemStats{}
+
 	var bytesWritten int
 	var bytes []byte
-	stats := new(Stats)
-	stats.MemStats = runtime.MemStats{}
 	ticker := time.NewTicker(time.Millisecond * time.Duration(c.interval))
 	defer ticker.Stop()
 
