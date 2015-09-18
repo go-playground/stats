@@ -14,14 +14,14 @@ const (
 
 // GoMemory contains go specific memory metrics
 type GoMemory struct {
-	NumGC               uint32           `json:"numgc"`
-	LastGC              uint64           `json:"lastgc"`
-	LastGCPauseDuration uint64           `json:"lastgcpause"`
-	Allocated           uint64           `json:"alloc"`
-	HeapAlloc           uint64           `json:"heap"`
-	HeapSys             uint64           `json:"sys"`
-	lastNumGC           uint32           `json:"-"`
-	mem                 runtime.MemStats `json:"-"`
+	NumGC               uint32            `json:"numgc"`
+	LastGC              uint64            `json:"lastgc"`
+	LastGCPauseDuration uint64            `json:"lastgcpause"`
+	Allocated           uint64            `json:"alloc"`
+	HeapAlloc           uint64            `json:"heap"`
+	HeapSys             uint64            `json:"sys"`
+	lastNumGC           uint32            `json:"-"`
+	mem                 *runtime.MemStats `json:"-"`
 }
 
 // GoInfo contains go specific metrics and stats
@@ -35,7 +35,6 @@ type GoInfo struct {
 type MemInfo struct {
 	Memory *mem.VirtualMemoryStat `json:"mem"`
 	Swap   *mem.SwapMemoryStat    `json:"swap"`
-	// GoMemstats *runtime.MemStats      `json:"gomem"`
 }
 
 // Stats contains all of the statistics to be passed and Encoded/Decoded on the Client and Server sides
@@ -50,6 +49,7 @@ func (s *Stats) GetHostInfo() {
 
 	if s.GoInfo == nil {
 		s.GoInfo = new(GoInfo)
+		s.GoInfo.Memory.mem = new(runtime.MemStats)
 	}
 
 	info, _ := host.HostInfo()
@@ -69,7 +69,7 @@ func (s *Stats) GetMemoryInfo() {
 		s.MemInfo = new(MemInfo)
 	}
 
-	runtime.ReadMemStats(&s.GoInfo.Memory.mem)
+	runtime.ReadMemStats(s.GoInfo.Memory.mem)
 	s.GoInfo.GoRoutines = runtime.NumGoroutine()
 	s.GoInfo.Memory.NumGC = s.GoInfo.Memory.mem.NumGC
 	s.GoInfo.Memory.Allocated = s.GoInfo.Memory.mem.Alloc
