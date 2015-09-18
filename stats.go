@@ -71,7 +71,6 @@ func (s *Stats) GetMemoryInfo() {
 
 	runtime.ReadMemStats(s.GoInfo.Memory.mem)
 	s.GoInfo.GoRoutines = runtime.NumGoroutine()
-	s.GoInfo.Memory.NumGC = s.GoInfo.Memory.mem.NumGC
 	s.GoInfo.Memory.Allocated = s.GoInfo.Memory.mem.Alloc
 	s.GoInfo.Memory.HeapAlloc = s.GoInfo.Memory.mem.HeapAlloc
 	s.GoInfo.Memory.HeapSys = s.GoInfo.Memory.mem.HeapSys
