@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"runtime"
 	"strconv"
 	"time"
 )
@@ -65,8 +64,7 @@ func (c *ClientStats) Run() {
 	client.SetWriteBuffer(bufferSize)
 
 	stats := new(Stats)
-	stats.HostInfo = GetHostInfo()
-	stats.MemStats = runtime.MemStats{}
+	stats.GetHostInfo()
 
 	var bytesWritten int
 	var bytes []byte
@@ -77,12 +75,12 @@ func (c *ClientStats) Run() {
 		select {
 		case <-ticker.C:
 
-			runtime.ReadMemStats(&stats.MemStats)
+			stats.GetMemoryInfo()
 
 			bytes, err = json.Marshal(stats)
 			bytesWritten, err = client.Write(bytes)
 			if err != nil {
-				fmt.Println(stats, err)
+				fmt.Println(err)
 				continue
 			}
 
