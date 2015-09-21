@@ -13,6 +13,7 @@ type ClientConfig struct {
 	Domain       string
 	Port         int
 	PollInterval int
+	PerCPUInfo   bool
 	Debug        bool
 }
 
@@ -65,6 +66,7 @@ func (c *ClientStats) Run() {
 
 	stats := new(Stats)
 	stats.GetHostInfo()
+	stats.GetCPUInfo()
 
 	var bytesWritten int
 	var bytes []byte
@@ -75,6 +77,8 @@ func (c *ClientStats) Run() {
 		select {
 		case <-ticker.C:
 
+			stats.GetTotalCPUTimes()
+			stats.GetCPUTimes()
 			stats.GetMemoryInfo()
 
 			bytes, err = json.Marshal(stats)
