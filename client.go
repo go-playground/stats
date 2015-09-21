@@ -13,7 +13,6 @@ type ClientConfig struct {
 	Domain       string
 	Port         int
 	PollInterval int
-	PerCPUInfo   bool
 	Debug        bool
 }
 
