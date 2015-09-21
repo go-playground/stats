@@ -115,6 +115,48 @@ func (s *Stats) GetCPUTimes() {
 	}
 }
 
+// CalculateCPUTimes calculates the total CPU times percentages per core
+func (s *Stats) CalculateCPUTimes() []CPUPercentages {
+
+	percentages := make([]CPUPercentages, len(s.CPUInfo.PerCPUTimes))
+
+	if len(s.CPUInfo.PrevCPUTimes) == 0 || len(s.CPUInfo.PerCPUTimes) == 0 {
+		return percentages
+	}
+
+	var diff float64
+	var total float64
+	var prevTotal float64
+	var prevStat cpu.CPUTimesStat
+	var cpuStat *CPUPercentages
+
+	for i, t := range s.CPUInfo.PerCPUTimes {
+		cpuStat = &percentages[i]
+		prevStat = s.CPUInfo.PrevCPUTimes[i]
+
+		total = t.User + t.System + t.Idle + t.Nice + t.Iowait + t.Irq + t.Softirq + t.Steal + t.Guest + t.GuestNice + t.Stolen
+		prevTotal = prevStat.User + prevStat.System + prevStat.Idle + prevStat.Nice + prevStat.Iowait + prevStat.Irq + prevStat.Softirq + prevStat.Steal + prevStat.Guest + prevStat.GuestNice + prevStat.Stolen
+
+		diff = total - prevTotal
+
+		cpuStat.CPU = t.CPU
+		cpuStat.User = (t.User - prevStat.User) / diff * 100
+		cpuStat.System = (t.System - prevStat.System) / diff * 100
+		cpuStat.Idle = (t.Idle - prevStat.Idle) / diff * 100
+		cpuStat.Nice = (t.Nice - prevStat.Nice) / diff * 100
+		cpuStat.IOWait = (t.Iowait - prevStat.Iowait) / diff * 100
+		cpuStat.IRQ = (t.Irq - prevStat.Irq) / diff * 100
+		cpuStat.SoftIRQ = (t.Softirq - prevStat.Softirq) / diff * 100
+		cpuStat.Steal = (t.Steal - prevStat.Steal) / diff * 100
+		cpuStat.Guest = (t.Guest - prevStat.Guest) / diff * 100
+		cpuStat.GuestNice = (t.GuestNice - prevStat.GuestNice) / diff * 100
+		cpuStat.Stolen = (t.Stolen - prevStat.Stolen) / diff * 100
+		cpuStat.Total = 100 * (diff - (t.Idle - prevStat.Idle)) / diff
+	}
+
+	return percentages
+}
+
 // GetAllCPUInfo populates Stats with hosts CPU information and Timings
 func (s *Stats) GetAllCPUInfo() {
 	s.GetCPUInfo()
@@ -160,6 +202,7 @@ func (s *Stats) CalculateTotalCPUTimes() []CPUPercentages {
 
 		diff = total - prevTotal
 
+		cpuStat.CPU = t.CPU
 		cpuStat.User = (t.User - prevStat.User) / diff * 100
 		cpuStat.System = (t.System - prevStat.System) / diff * 100
 		cpuStat.Idle = (t.Idle - prevStat.Idle) / diff * 100
