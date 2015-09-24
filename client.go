@@ -5,8 +5,30 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"sync"
 	"time"
 )
+
+type httpStats struct {
+	lock     sync.RWMutex
+	requests []*HTTPRequest
+}
+
+// Add adds an entry to the httpStats array
+func (h *httpStats) Add(r *HTTPRequest) {
+	h.lock.Lock()
+	defer h.lock.Unlock()
+	h.requests = append(h.requests, r)
+}
+
+func (h *httpStats) extract() []*HTTPRequest {
+	h.lock.Lock()
+	defer h.lock.Unlock()
+
+	old := h.requests
+	h.requests = []*HTTPRequest{}
+	return old
+}
 
 // ClientConfig is used to initialize a new ClientStats object
 type ClientConfig struct {
@@ -23,6 +45,7 @@ type ClientStats struct {
 	stop       chan struct{}
 	interval   int
 	debug      bool
+	httpStats  *httpStats
 }
 
 // NewClient create a new client object for use
@@ -33,6 +56,7 @@ func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientS
 		interval:   clientConfig.PollInterval,
 		stop:       make(chan struct{}),
 		debug:      clientConfig.Debug,
+		httpStats:  new(httpStats),
 	}, nil
 }
 
@@ -79,6 +103,7 @@ func (c *ClientStats) Run() {
 			stats.GetTotalCPUTimes()
 			stats.GetCPUTimes()
 			stats.GetMemoryInfo()
+			stats.HTTPRequests = c.httpStats.extract()
 
 			bytes, err = json.Marshal(stats)
 			bytesWritten, err = client.Write(bytes)

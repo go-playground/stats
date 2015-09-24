@@ -32,14 +32,14 @@ type CPUPercentages struct {
 
 // GoMemory contains go specific memory metrics
 type GoMemory struct {
-	NumGC               uint32            `json:"numgc"`
-	LastGC              uint64            `json:"lastgc"`
-	LastGCPauseDuration uint64            `json:"lastgcpause"`
-	Alloc               uint64            `json:"alloc"`
-	HeapAlloc           uint64            `json:"heap"`
-	HeapSys             uint64            `json:"sys"`
-	lastNumGC           uint32            `json:"-"`
-	mem                 *runtime.MemStats `json:"-"`
+	NumGC               uint32 `json:"numgc"`
+	LastGC              uint64 `json:"lastgc"`
+	LastGCPauseDuration uint64 `json:"lastgcpause"`
+	Alloc               uint64 `json:"alloc"`
+	HeapAlloc           uint64 `json:"heap"`
+	HeapSys             uint64 `json:"sys"`
+	lastNumGC           uint32
+	mem                 *runtime.MemStats
 }
 
 // GoInfo contains go specific metrics and stats
@@ -66,10 +66,11 @@ type CPUInfo struct {
 
 // Stats contains all of the statistics to be passed and Encoded/Decoded on the Client and Server sides
 type Stats struct {
-	HostInfo *host.HostInfoStat `json:"hostInfo,omitempty"`
-	CPUInfo  *CPUInfo           `json:"cpu,omitempty"`
-	MemInfo  *MemInfo           `json:"memInfo,omitempty"`
-	GoInfo   *GoInfo            `json:"goInfo,omitempty"`
+	HostInfo     *host.HostInfoStat `json:"hostInfo,omitempty"`
+	CPUInfo      *CPUInfo           `json:"cpu,omitempty"`
+	MemInfo      *MemInfo           `json:"memInfo,omitempty"`
+	GoInfo       *GoInfo            `json:"goInfo,omitempty"`
+	HTTPRequests []*HTTPRequest     `json:"http"`
 }
 
 func (s *Stats) initGoInfo() {
