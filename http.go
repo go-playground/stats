@@ -63,6 +63,8 @@ type HTTPRequest struct {
 	clientStats           *ClientStats
 }
 
+// NewHTTPRequest creates a new HTTPRequest for monitoring which wraps the ResponseWriter in order
+// to collect stats so you need to call the Writer() function from the HTTPRequest created by this call
 func (s *ClientStats) NewHTTPRequest(w http.ResponseWriter, r *http.Request) *HTTPRequest {
 
 	return &HTTPRequest{
@@ -81,14 +83,14 @@ func (r *HTTPRequest) Writer() http.ResponseWriter {
 	return r.writer
 }
 
-// Complete finalizes an HTTPRequest object
+// Failure records an HTTP failure and automatically completes the request
 func (r *HTTPRequest) Failure(err string) {
 	r.HasErrors = true
 	r.Error = err
 	r.Complete()
 }
 
-// Complete finalizes an HTTPRequest object
+// Complete finalizes an HTTPRequest and logs it.
 func (r *HTTPRequest) Complete() {
 
 	r.End = time.Now().UTC()

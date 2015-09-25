@@ -118,9 +118,15 @@ func TestClientSendingData(t *testing.T) {
 	}
 
 	localConfig := &ClientConfig{
-		Domain:       "",
-		Port:         3009,
-		PollInterval: 1000,
+		Domain:           "",
+		Port:             3009,
+		PollInterval:     1000,
+		LogHostInfo:      true,
+		LogCPUInfo:       true,
+		LogTotalCPUTimes: true,
+		LogPerCPUTimes:   true,
+		LogMemory:        true,
+		LogGoMemory:      true,
 	}
 
 	client, err := NewClient(localConfig, serverConfig)

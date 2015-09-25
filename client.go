@@ -32,20 +32,32 @@ func (h *httpStats) extract() []*HTTPRequest {
 
 // ClientConfig is used to initialize a new ClientStats object
 type ClientConfig struct {
-	Domain       string
-	Port         int
-	PollInterval int
-	Debug        bool
+	Domain           string
+	Port             int
+	PollInterval     int
+	Debug            bool
+	LogHostInfo      bool
+	LogCPUInfo       bool
+	LogTotalCPUTimes bool
+	LogPerCPUTimes   bool
+	LogMemory        bool
+	LogGoMemory      bool
 }
 
 // ClientStats is the object used to collect and send data to the server for processing
 type ClientStats struct {
-	localAddr  string
-	serverAddr string
-	stop       chan struct{}
-	interval   int
-	debug      bool
-	httpStats  *httpStats
+	localAddr        string
+	serverAddr       string
+	stop             chan struct{}
+	interval         int
+	debug            bool
+	httpStats        *httpStats
+	logHostInfo      bool
+	logCPUInfo       bool
+	logTotalCPUTimes bool
+	logPerCPUTimes   bool
+	logMemory        bool
+	logGoMemory      bool
 }
 
 // NewClient create a new client object for use
@@ -88,8 +100,14 @@ func (c *ClientStats) Run() {
 	client.SetWriteBuffer(bufferSize)
 
 	stats := new(Stats)
-	stats.GetHostInfo()
-	stats.GetCPUInfo()
+
+	if c.logHostInfo {
+		stats.GetHostInfo()
+	}
+
+	if c.logCPUInfo {
+		stats.GetCPUInfo()
+	}
 
 	var bytesWritten int
 	var bytes []byte
@@ -100,9 +118,15 @@ func (c *ClientStats) Run() {
 		select {
 		case <-ticker.C:
 
-			stats.GetTotalCPUTimes()
-			stats.GetCPUTimes()
-			stats.GetMemoryInfo()
+			if c.logTotalCPUTimes {
+				stats.GetTotalCPUTimes()
+			}
+
+			if c.logPerCPUTimes {
+				stats.GetCPUTimes()
+			}
+
+			stats.GetMemoryInfo(c.logMemory, c.logGoMemory)
 			stats.HTTPRequests = c.httpStats.extract()
 
 			bytes, err = json.Marshal(stats)

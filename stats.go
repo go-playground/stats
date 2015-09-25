@@ -222,32 +222,37 @@ func (s *Stats) CalculateTotalCPUTimes() []CPUPercentages {
 }
 
 // GetMemoryInfo populates Stats with host and go process memory information
-func (s *Stats) GetMemoryInfo() {
+func (s *Stats) GetMemoryInfo(logMemory, logGoMemory bool) {
 
-	if s.GoInfo == nil {
-		s.initGoInfo()
+	if logGoMemory {
+		if s.GoInfo == nil {
+			s.initGoInfo()
+		}
+
+		runtime.ReadMemStats(s.GoInfo.Memory.mem)
+		s.GoInfo.GoRoutines = runtime.NumGoroutine()
+		s.GoInfo.Memory.Alloc = s.GoInfo.Memory.mem.Alloc
+		s.GoInfo.Memory.HeapAlloc = s.GoInfo.Memory.mem.HeapAlloc
+		s.GoInfo.Memory.HeapSys = s.GoInfo.Memory.mem.HeapSys
+
+		if s.GoInfo.Memory.LastGC != s.GoInfo.Memory.mem.LastGC {
+			s.GoInfo.Memory.LastGC = s.GoInfo.Memory.mem.LastGC
+			s.GoInfo.Memory.NumGC = s.GoInfo.Memory.mem.NumGC - s.GoInfo.Memory.lastNumGC
+			s.GoInfo.Memory.lastNumGC = s.GoInfo.Memory.mem.NumGC
+			s.GoInfo.Memory.LastGCPauseDuration = s.GoInfo.Memory.mem.PauseNs[(s.GoInfo.Memory.mem.NumGC+255)%256]
+		} else {
+			s.GoInfo.Memory.NumGC = 0
+			s.GoInfo.Memory.LastGCPauseDuration = 0
+		}
 	}
 
-	if s.MemInfo == nil {
-		s.MemInfo = new(MemInfo)
+	if logMemory {
+
+		if s.MemInfo == nil {
+			s.MemInfo = new(MemInfo)
+		}
+
+		s.MemInfo.Memory, _ = mem.VirtualMemory()
+		s.MemInfo.Swap, _ = mem.SwapMemory()
 	}
-
-	runtime.ReadMemStats(s.GoInfo.Memory.mem)
-	s.GoInfo.GoRoutines = runtime.NumGoroutine()
-	s.GoInfo.Memory.Alloc = s.GoInfo.Memory.mem.Alloc
-	s.GoInfo.Memory.HeapAlloc = s.GoInfo.Memory.mem.HeapAlloc
-	s.GoInfo.Memory.HeapSys = s.GoInfo.Memory.mem.HeapSys
-
-	if s.GoInfo.Memory.LastGC != s.GoInfo.Memory.mem.LastGC {
-		s.GoInfo.Memory.LastGC = s.GoInfo.Memory.mem.LastGC
-		s.GoInfo.Memory.NumGC = s.GoInfo.Memory.mem.NumGC - s.GoInfo.Memory.lastNumGC
-		s.GoInfo.Memory.lastNumGC = s.GoInfo.Memory.mem.NumGC
-		s.GoInfo.Memory.LastGCPauseDuration = s.GoInfo.Memory.mem.PauseNs[(s.GoInfo.Memory.mem.NumGC+255)%256]
-	} else {
-		s.GoInfo.Memory.NumGC = 0
-		s.GoInfo.Memory.LastGCPauseDuration = 0
-	}
-
-	s.MemInfo.Memory, _ = mem.VirtualMemory()
-	s.MemInfo.Swap, _ = mem.SwapMemory()
 }
