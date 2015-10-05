@@ -63,12 +63,18 @@ type ClientStats struct {
 // NewClient create a new client object for use
 func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientStats, error) {
 	return &ClientStats{
-		localAddr:  clientConfig.Domain + ":" + strconv.Itoa(clientConfig.Port),
-		serverAddr: serverConfig.Domain + ":" + strconv.Itoa(serverConfig.Port),
-		interval:   clientConfig.PollInterval,
-		stop:       make(chan struct{}),
-		debug:      clientConfig.Debug,
-		httpStats:  new(httpStats),
+		localAddr:        clientConfig.Domain + ":" + strconv.Itoa(clientConfig.Port),
+		serverAddr:       serverConfig.Domain + ":" + strconv.Itoa(serverConfig.Port),
+		interval:         clientConfig.PollInterval,
+		stop:             make(chan struct{}),
+		debug:            clientConfig.Debug,
+		httpStats:        new(httpStats),
+		logHostInfo:      clientConfig.LogHostInfo,
+		logCPUInfo:       clientConfig.LogCPUInfo,
+		logTotalCPUTimes: clientConfig.LogTotalCPUTimes,
+		logPerCPUTimes:   clientConfig.LogPerCPUTimes,
+		logMemory:        clientConfig.LogMemory,
+		logGoMemory:      clientConfig.LogGoMemory,
 	}, nil
 }
 
