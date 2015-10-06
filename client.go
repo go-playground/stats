@@ -42,6 +42,7 @@ type ClientConfig struct {
 	LogPerCPUTimes   bool
 	LogMemory        bool
 	LogGoMemory      bool
+	CustomBufferSize int
 }
 
 // ClientStats is the object used to collect and send data to the server for processing
@@ -58,10 +59,17 @@ type ClientStats struct {
 	logPerCPUTimes   bool
 	logMemory        bool
 	logGoMemory      bool
+	bufferSize       int
 }
 
 // NewClient create a new client object for use
 func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientStats, error) {
+
+	bSize := clientConfig.CustomBufferSize
+	if bSize == 0 {
+		bSize = defaultBufferSize
+	}
+
 	return &ClientStats{
 		localAddr:        clientConfig.Domain + ":" + strconv.Itoa(clientConfig.Port),
 		serverAddr:       serverConfig.Domain + ":" + strconv.Itoa(serverConfig.Port),
@@ -75,6 +83,7 @@ func NewClient(clientConfig *ClientConfig, serverConfig *ServerConfig) (*ClientS
 		logPerCPUTimes:   clientConfig.LogPerCPUTimes,
 		logMemory:        clientConfig.LogMemory,
 		logGoMemory:      clientConfig.LogGoMemory,
+		bufferSize:       bSize,
 	}, nil
 }
 
@@ -103,7 +112,7 @@ func (c *ClientStats) Run() {
 	}
 	defer client.Close()
 
-	client.SetWriteBuffer(bufferSize)
+	client.SetWriteBuffer(c.bufferSize)
 
 	stats := new(Stats)
 

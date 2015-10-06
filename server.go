@@ -9,22 +9,31 @@ import (
 
 // ServerConfig is used to initialize a new ServerStats object
 type ServerConfig struct {
-	Domain string
-	Port   int
-	Debug  bool
+	Domain           string
+	Port             int
+	Debug            bool
+	CustomBufferSize int
 }
 
 // ServerStats is the object used to receive, store and send data for usage
 type ServerStats struct {
-	addr  string
-	debug bool
+	addr       string
+	debug      bool
+	bufferSize int
 }
 
 // NewServer create a new server object for use
 func NewServer(config *ServerConfig) (*ServerStats, error) {
+
+	bSize := config.CustomBufferSize
+	if bSize == 0 {
+		bSize = defaultBufferSize
+	}
+
 	return &ServerStats{
-		addr:  config.Domain + ":" + strconv.Itoa(config.Port),
-		debug: config.Debug,
+		addr:       config.Domain + ":" + strconv.Itoa(config.Port),
+		debug:      config.Debug,
+		bufferSize: bSize,
 	}, nil
 }
 
@@ -50,11 +59,11 @@ func (s *ServerStats) Run() <-chan *Stats {
 		}
 		defer server.Close()
 
-		server.SetReadBuffer(bufferSize)
+		server.SetReadBuffer(s.bufferSize)
 
 		var addr *net.UDPAddr
 		var bytesRead int
-		buff := make([]byte, bufferSize)
+		buff := make([]byte, s.bufferSize)
 		stats := new(Stats)
 
 		for {

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	udp        = "udp"
-	bufferSize = 1024 * 10
+	udp               = "udp"
+	defaultBufferSize = 1024 * 1000
 )
 
 // CPUPercentages contains the CPU percentage information
