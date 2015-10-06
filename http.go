@@ -48,17 +48,17 @@ func (w *LogResponseWritter) WriteHeader(statusCode int) {
 
 // HTTPRequest contains information about the life of an http request
 type HTTPRequest struct {
-	URL                   string        `json:"url"`
-	Method                string        `json:"method"`
-	RequestContentLength  int64         `json:"reqContent"`
-	Headers               http.Header   `json:"headers"`
-	Start                 time.Time     `json:"start"`
-	End                   time.Time     `json:"end"`
-	Duration              time.Duration `json:"duration"`
-	ResponseContentLength int64         `json:"resContent"`
-	StatusCode            int           `json:"status"`
-	HasErrors             bool          `json:"hasErrs"`
-	Error                 string        `json:"err"`
+	URL                   string      `json:"url"`
+	Method                string      `json:"method"`
+	RequestContentLength  int64       `json:"reqContent"`
+	Headers               http.Header `json:"headers"`
+	Start                 time.Time   `json:"start"`
+	End                   time.Time   `json:"end"`
+	Duration              int64       `json:"duration"`
+	ResponseContentLength int64       `json:"resContent"`
+	StatusCode            int         `json:"status"`
+	HasErrors             bool        `json:"hasErrs"`
+	Error                 string      `json:"err"`
 	writer                *LogResponseWritter
 	clientStats           *ClientStats
 }
@@ -94,7 +94,7 @@ func (r *HTTPRequest) Failure(err string) {
 func (r *HTTPRequest) Complete() {
 
 	r.End = time.Now().UTC()
-	r.Duration = r.End.Sub(r.Start)
+	r.Duration = r.End.Sub(r.Start).Nanoseconds()
 	r.ResponseContentLength = int64(r.writer.Size())
 	r.StatusCode = r.writer.Status()
 	r.clientStats.httpStats.Add(r)
