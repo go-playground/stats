@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/joeybloggs/stats"
+	"gopkg.in/go-playground/stats.v1"
 )
 
 func main() {

@@ -1,6 +1,7 @@
 Package stats
 =============
 
+[![Build Status](https://semaphoreci.com/api/v1/projects/b5c5d4f1-ec31-441f-a6d2-88f4e73105df/563578/badge.svg)](https://semaphoreci.com/joeybloggs/stats)
 [![GoDoc](https://godoc.org/gopkg.in/go-playground/stats.v1?status.svg)](https://godoc.org/gopkg.in/go-playground/stats.v1)
 
 Package stats allows for gathering of statistics regarding your Go application and system it is running on and
@@ -27,6 +28,21 @@ send off to a logging service.
 * Per Core CPU Timings
 * Memory + Swap Information
 
+Installation
+------------
+
+Use go get.
+
+	go get gopkg.in/go-playground/stats.v1
+
+or to update
+
+	go get -u gopkg.in/go-playground/stats.v1
+
+Then import the validator package into your own code.
+
+	import "gopkg.in/go-playground/stats.v1"
+
 #### Example
 Server
 ```go
@@ -35,7 +51,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/joeybloggs/stats"
+	"gopkg.in/go-playground/stats.v1"
 )
 
 func main() {
@@ -77,7 +93,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/joeybloggs/stats"
+	"gopkg.in/go-playground/stats.v1"
 )
 
 var statsClient *stats.ClientStats
@@ -151,3 +167,7 @@ func LoggingRecoveryHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 ```
+
+License
+------
+Distributed under MIT License, please see license file in code for more details.

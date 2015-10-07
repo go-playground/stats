@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/joeybloggs/stats"
+	"gopkg.in/go-playground/stats.v1"
 )
 
 var statsClient *stats.ClientStats
