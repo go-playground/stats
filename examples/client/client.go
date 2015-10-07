@@ -48,7 +48,7 @@ func main() {
 //
 //
 // Middleware example for capturing HTTP Request info
-// NOTE: this is standard go middlware, but could be adapted toother types/styles easily
+// NOTE: this is standard go middlware, but could be adapted to other types/styles easily
 //
 func LoggingRecoveryHandler(next http.Handler) http.Handler {
 
