@@ -1,6 +1,8 @@
 Package stats
 =============
 
+[![GoDoc](https://godoc.org/gopkg.in/go-playground/stats.v1?status.svg)](https://godoc.org/gopkg.in/go-playground/stats.v1)
+
 Package stats allows for gathering of statistics regarding your Go application and system it is running on and
 sent them via UDP to a server where you can do whatever you wish to the stats; display, store in database or
 send off to a logging service.
