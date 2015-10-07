@@ -14,8 +14,7 @@ type httpStats struct {
 	requests []*HTTPRequest
 }
 
-// Add adds an entry to the httpStats array
-func (h *httpStats) Add(r *HTTPRequest) {
+func (h *httpStats) add(r *HTTPRequest) {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	h.requests = append(h.requests, r)

@@ -97,5 +97,5 @@ func (r *HTTPRequest) Complete() {
 	r.Duration = r.End.Sub(r.Start).Nanoseconds()
 	r.ResponseContentLength = int64(r.writer.Size())
 	r.StatusCode = r.writer.Status()
-	r.clientStats.httpStats.Add(r)
+	r.clientStats.httpStats.add(r)
 }

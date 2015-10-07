@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 	// setup server for tests
 	config := &ServerConfig{
 		Domain: "",
-		Port:   3008,
+		Port:   3010,
 	}
 
 	server, err := NewServer(config)
@@ -42,84 +42,16 @@ func TestMain(m *testing.M) {
 	// teardown
 }
 
-// func TestBadListenUDP(t *testing.T) {
-
-// 	serverConfig := &ServerConfig{
-// 		Domain: "",
-// 		Port:   3008,
-// 	}
-
-// 	server, err := NewServer(serverConfig)
-// 	Equal(t, err, nil)
-
-// 	PanicMatches(t, func() { server.Run() }, "listen udp :3008: bind: address already in use")
-// }
-
-// func TestBadServerAndEncodingFailure(t *testing.T) {
-// 	serverConfig := &ServerConfig{
-// 		Domain: "",
-// 		Port:   3012,
-// 	}
-
-// 	localConfig := &ClientConfig{
-// 		Domain:       "",
-// 		Port:         3013,
-// 		PollInterval: 1000,
-// 	}
-
-// 	client, err := NewClient(localConfig, serverConfig)
-// 	Equal(t, err, nil)
-// 	go client.Run()
-
-// 	<-time.Tick(time.Second * 1)
-
-// 	client2, err := NewClient(localConfig, serverConfig)
-// 	Equal(t, err, nil)
-// 	PanicMatches(t, func() {
-// 		client2.Run()
-// 	}, "dial udp :3013->:3012: bind: address already in use")
-// }
-
-// func TestBadAddrs(t *testing.T) {
-// 	serverConfig := &ServerConfig{
-// 		Domain: "werfewfewfewf",
-// 		Port:   -1000,
-// 	}
-
-// 	server, err := NewServer(serverConfig)
-// 	Equal(t, err, nil)
-
-// 	PanicMatches(t, func() { server.Run() }, "lookup udp/-1000: nodename nor servname provided, or not known")
-
-// 	localConfig := &ClientConfig{
-// 		Domain:       "erferfergergerg",
-// 		Port:         -2000,
-// 		PollInterval: 1000,
-// 	}
-
-// 	client, err := NewClient(localConfig, serverConfig)
-// 	Equal(t, err, nil)
-// 	PanicMatches(t, func() { client.Run() }, "lookup udp/-1000: nodename nor servname provided, or not known")
-
-// 	// set good server, but bad local remains
-// 	serverConfig.Domain = ""
-// 	serverConfig.Port = 3011
-
-// 	client, err = NewClient(localConfig, serverConfig)
-// 	Equal(t, err, nil)
-// 	PanicMatches(t, func() { client.Run() }, "lookup udp/-2000: nodename nor servname provided, or not known")
-// }
-
 func TestClientSendingData(t *testing.T) {
 
 	serverConfig := &ServerConfig{
 		Domain: "",
-		Port:   3008,
+		Port:   3010,
 	}
 
 	localConfig := &ClientConfig{
 		Domain:           "",
-		Port:             3009,
+		Port:             3011,
 		PollInterval:     1000,
 		LogHostInfo:      true,
 		LogCPUInfo:       true,
