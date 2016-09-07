@@ -1,7 +1,7 @@
 Package stats
 =============
 
-![Project status](https://img.shields.io/badge/version-1.0.1-green.svg)
+![Project status](https://img.shields.io/badge/version-1.0.2-green.svg)
 [![Build Status](https://semaphoreci.com/api/v1/projects/b5c5d4f1-ec31-441f-a6d2-88f4e73105df/563578/badge.svg)](https://semaphoreci.com/joeybloggs/stats)
 [![GoDoc](https://godoc.org/gopkg.in/go-playground/stats.v1?status.svg)](https://godoc.org/gopkg.in/go-playground/stats.v1)
 

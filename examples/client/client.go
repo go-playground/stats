@@ -13,7 +13,7 @@ var statsClient *stats.ClientStats
 func main() {
 
 	serverConfig := &stats.ServerConfig{
-		Domain: "remoteserver",
+		Domain: "localhost",
 		Port:   3008,
 		Debug:  false,
 	}
@@ -42,6 +42,8 @@ func main() {
 	// to have access to the client.
 	// see below for middleware example
 	statsClient = client
+
+	<-make(chan struct{})
 }
 
 // LoggingRecoveryHandler ...
