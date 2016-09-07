@@ -1,6 +1,7 @@
 Package stats
 =============
 
+![Project status](https://img.shields.io/badge/version-1.0.1-green.svg)
 [![Build Status](https://semaphoreci.com/api/v1/projects/b5c5d4f1-ec31-441f-a6d2-88f4e73105df/563578/badge.svg)](https://semaphoreci.com/joeybloggs/stats)
 [![GoDoc](https://godoc.org/gopkg.in/go-playground/stats.v1?status.svg)](https://godoc.org/gopkg.in/go-playground/stats.v1)
 
@@ -170,4 +171,7 @@ func LoggingRecoveryHandler(next http.Handler) http.Handler {
 
 License
 ------
-Distributed under MIT License, please see license file in code for more details.
+- [MIT License](https://github.com/go-playground/stats/blob/v1/LICENSE), Copyright (c) 2015 Dean Karn
+- [BSD License](https://github.com/go-playground/stats/tree/v1/vendor/github.com/shirou/gopsutil/LICENSE)
+	- Copyright (c) 2014, WAKAYAMA Shirou
+	- Copyright (c) 2009 The Go Authors. All rights reserved.
