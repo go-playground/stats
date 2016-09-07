@@ -1,3 +1,3 @@
 vendors:
 - path: github.com/shirou/gopsutil
-  rev: f20771d32a54adb88336a17e26b511fdc8f6cc08
+  rev: 3166d415382aa5bbd8bb151cc50a756730cd5ec4

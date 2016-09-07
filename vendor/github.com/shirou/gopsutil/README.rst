@@ -11,18 +11,15 @@ gopsutil: psutil for golang
         :target: http://godoc.org/github.com/shirou/gopsutil
 
 This is a port of psutil (http://pythonhosted.org/psutil/). The challenge is porting all
-psutil functions on some architectures.
+psutil functions on some architectures...
 
+.. highlights:: Package Structure Changed!
 
-.. highlights:: Breaking Changes!
+   Package (a.k.a. directory) structure has been changed!! see `issue 24 <https://github.com/shirou/gopsutil/issues/24>`_
 
-   Breaking changes is introduced at v2. See `issue 174 <https://github.com/shirou/gopsutil/issues/174>`_ .
+.. highlights:: golang 1.4 will become REQUIRED!
 
-
-Migrating to v2
--------------------------
-
-On gopsutil itself, `v2migration.sh <https://github.com/shirou/gopsutil/blob/v2/v2migration.sh>`_ is used for migration. It can not be commonly used, but it may help you with migration.
+   Since syscall package becomes frozen, we should use golang/x/sys of golang 1.4 as soon as possible.
 
 
 Available Architectures
@@ -39,26 +36,22 @@ All works are implemented without cgo by porting c struct to golang struct.
 Usage
 ---------
 
-Note: gopsutil v2 breaks compatibility. If you want to stay with compatibility, please use v1 branch and vendoring.
-
 .. code:: go
 
-   package main
-
    import (
-       "fmt"
+   	"fmt"
 
-       "github.com/shirou/gopsutil/mem"
+   	"github.com/shirou/gopsutil/mem"
    )
 
    func main() {
-       v, _ := mem.VirtualMemory()
+   	v, _ := mem.VirtualMemory()
 
-       // almost every return value is a struct
-       fmt.Printf("Total: %v, Free:%v, UsedPercent:%f%%\n", v.Total, v.Free, v.UsedPercent)
+   	// almost every return value is a struct
+   	fmt.Printf("Total: %v, Free:%v, UsedPercent:%f%%\n", v.Total, v.Free, v.UsedPercent)
 
-       // convert to JSON. String() is also implemented
-       fmt.Println(v)
+   	// convert to JSON. String() is also implemented
+   	fmt.Println(v)
    }
 
 The output is below.
@@ -66,23 +59,15 @@ The output is below.
 ::
 
   Total: 3179569152, Free:284233728, UsedPercent:84.508194%
-  {"total":3179569152,"available":492572672,"used":2895335424,"usedPercent":84.50819439828305, (snip...)}
+  {"total":3179569152,"available":492572672,"used":2895335424,"usedPercent":84.50819439828305, (snip)}
 
-You can set an alternative location to :code:`/proc` by setting the :code:`HOST_PROC` environment variable.
-
-You can set an alternative location to :code:`/sys` by setting the :code:`HOST_SYS` environment variable.
-
-You can set an alternative location to :code:`/etc` by setting the :code:`HOST_ETC` environment variable.
+You can set an alternative location to /proc by setting the HOST_PROC environment variable.
+You can set an alternative location to /sys by setting the HOST_SYS environment variable.
 
 Documentation
 ------------------------
 
 see http://godoc.org/github.com/shirou/gopsutil
-
-Requirements
------------------
-
-- go1.5 or above is required.
 
 
 More Info
@@ -153,7 +138,7 @@ Current Status
 ------------------
 
 - x: work
-- b: almost works, but something is broken
+- b: almost work but something broken
 
 ================= ====== ======= ====== =======
 name              Linux  FreeBSD MacOSX Windows
@@ -194,13 +179,13 @@ exe                 x     x              x
 uids                x     x      x
 gids                x     x      x
 terminal            x     x      x
-io_counters         x     x              x
-nice                x     x      x       x
+io_counters         x
+nice                x            x       x
 num_fds             x
 num_ctx_switches    x
 num_threads         x     x      x       x
 cpu_times           x
-memory_info         x     x      x       x
+memory_info         x     x      x
 memory_info_ex      x
 memory_maps         x
 open_files          x
@@ -233,7 +218,7 @@ hostname              x     x      x       x
   proces              x     x
   os                  x     x      x       x
   platform            x     x      x
-  platformfamily      x     x      x
+  platformfamiliy     x     x      x
   virtualization      x
 **CPU**
   VendorID            x     x      x       x

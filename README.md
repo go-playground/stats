@@ -175,3 +175,4 @@ License
 - [BSD License](https://github.com/go-playground/stats/tree/v1/vendor/github.com/shirou/gopsutil/LICENSE)
 	- Copyright (c) 2014, WAKAYAMA Shirou
 	- Copyright (c) 2009 The Go Authors. All rights reserved.
+- [BSD License](https://github.com/go-playground/stats/tree/v1/vendor/github.com/shirou/w32/LICENSE), Copyright (c) 2010-2012 The w32 Authors. All rights reserved.
